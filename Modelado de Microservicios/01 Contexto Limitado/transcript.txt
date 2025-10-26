@@ -1,0 +1,54 @@
+Analizar los dominios del negocio para identificar áreas funcionales independientes. 2. Definir los límites contextuales (bounded contexts) de cada microservicio.
+Universidad Politécnica de Chiapas.
+
+The following table: "Cuatrimestre. ","Septiembre- Diciembre 2025 " "Grupo. ","Noveno B " "Asignatura. ","SOA " "Corte ","C2 " "Actividad. ","Analicis Bouned Context del proyecto " "Fecha ","221189 " "Matricula. ","231208
+
+221214 " ,"231198 " "Nombre. ","Luis Alberto Batalla. Willber Hernandez. Esduardo Palomeque Roblero. Maria Fernanda Sanchez " 
+
+Universidad Politécnica de Chiapas.
+
+Análisis de Bounded Contexts (Contextos Delimitados) 22 de octubre de 2025 Resumen  Este documento presenta el análisis de los Bounded Contexts (Contextos Delimitados) para la plataforma de Reconexión Humana, un proyecto que combina una red social tipo Instagram con un sistema automatizado de salud pública para la mitigación y prevención de adicciones. La identificación de estos contextos es fundamental para establecer límites claros en el modelo de dominio, facilitar la arquitectura de microservicios y garantizar la seguridad de los datos sensibles. Índice 
+
+
+
+
+
+The following table: "1. Introducción al Proyecto ","1 " "2. Análisis de Bounded Contexts ","1 " "2.1. Contexto 1: Conexión Social y Contenido (SocialConnect) ","1 " "2.2. Contexto 2: Gestión de Identidad y Autenticación (AuthIdentity) ","2 " "2.3. Contexto 3: Análisis de Riesgo y Salud Pública (RiskMitigation) ","2 " "2.4. Contexto 4: Gestión de Documentos y Recursos (ResourcesDocs ","2 " "3. Relaciones y Mapeo de Contextos ","2 " 
+
+Conclusión 1. Introducción al Proyecto 3 El proyecto consiste en una plataforma que funciona en dos planos distintos pero interconectados:
+
+
+
+
+
+Plano Social: Funciona como una red social (tipo Instagram), permitiendo la interacción, publicación de contenido (posts, fotos, videos), seguimiento entre usuarios y la creación de una comunidad de apoyo.
+
+Plano de Salud Pública: Posee un sistema automatizado que, a través de análisis de datos y clusters, identifica poblaciones y usuarios en riesgo de adicción. El objetivo final es generar y administrar un plan de salud pública personalizado para mitigar el problema o evitar su propagación. La complejidad y la naturaleza dual del proyecto (red social vs. datos sensibles de salud) hacen imprescindible la aplicación del patrón Bounded Context de Domain-Driven Design (DDD).
+
+
+
+Análisis de Bounded Contexts Se han identificado cuatro (4) Contextos Delimitados principales. Cada uno representa un área coherente del negocio donde los términos y modelos tienen un significado único (Lenguaje Ubicuo) y claro. 2.1. Contexto 1: Conexión Social y Contenido (SocialConnect) Este contexto gestiona toda la lógica de la red social y el contenido interactivo. Su enfoque es la visibilidad, la interacción y la experiencia de usuario. ■ Modelo Clave: El concepto de Usuario aquí se refiere al Perfil Público (nombre de usuario, foto, seguidores, seguidos). ■ Objetivo: Maximizar la interacción y la permanencia en la plataforma. ■ Entidades Centrales: Post, Media (Photo/Video), Like, Comment, FollowRelation. 1 
+
+
+
+
+
+Cuadro 1: Responsabilidades del Contexto Social 
+
+The following table: "Componente ","Responsabilidad Principal " "Gestión de Publicaciones ","Creación, almacenamiento, recuperación y elimina- ción de Post y sus contenidos multimedia. " "Interacciones ","Control de Likes, Comments y conteo de interaccio- nes. " "Feed y Timeline ","Generación del flujo de contenido personalizado para cada usuario. " 
+
+2.2. Contexto 2: Gestión de Identidad y Autenticación (AuthIdentity) Este contexto es transversal y se centra en la seguridad y el acceso. Modela la identidad fundamental del individuo para toda la plataforma. ■ Modelo Clave: El concepto de Usuario aquí es la Cuenta de Acceso (credenciales, roles, permisos). ■ Objetivo: Asegurar el acceso y gestionar los permisos a los distintos servicios. ■ Entidades Centrales: Identity, Credential, AuthToken, Role, Permission. 2.3. Contexto 3: Análisis de Riesgo y Salud Pública (RiskMitigation) Este es el contexto de valor principal. Maneja la lógica de negocio sensible y compleja de salud pública. Debe estar fuertemente aislado del resto por motivos de seguridad y privacidad. ■ Modelo Clave: El concepto de Usuario aquí es el Sujeto de Análisis o Paciente, con un conjunto de datos mucho más sensible y anónimo. ■ Objetivo: Identificar, clasificar y generar planes de intervención automatizados para poblaciones de riesgo. ■ Entidades Centrales: RiskProfile, HealthPlan, Cluster, InterventionLog, Service. Cuadro 2: Funcionalidades Clave del Contexto de Riesgo 
+
+
+
+
+
+The following table: "Funcionalidad ","Descripción " "Clustering y ML ","Ejecución de algoritmos para identificar patrones de riesgo y agrupar usuarios. " "Generación de Plan ","Lógica para generar automáticamente el HealthPlan basado en el RiskProfile. " "Servicios de Intervención ","Modelado y seguimiento de las interacciones terapéu- ticas o de mitigación (Services). " 
+
+2.4. Contexto 4: Gestión de Documentos y Recursos (Resources Docs) Este contexto se encarga de los activos informativos y educativos formales. ■ Modelo Clave: El concepto de Recurso (material educativo, guía, manual). ■ Objetivo: Mantener la integridad y disponibilidad de la información de apoyo al plan de salud. ■ Entidades Centrales: Document, ResourceCategory, Metadata. 3. Relaciones y Mapeo de Contextos Los contextos no están completamente aislados; deben interactuar de manera controlada. ■ Relación entre AuthIdentity y el Resto: AuthIdentity es el Proveedor de Identidad (Identity Provider) para todos los demás contextos. Un usuario que publica un Post (Contexto 1) o que es analizado (Contexto 3) debe ser validado por AuthIdentity. 2 
+
+
+
+
+
+■ Traducción de Usuarios: La clave de usuario global (ej. user_id) debe ser el único punto de contacto entre SocialConnect (Perfil Público) y RiskMitigation (Sujeto de Análisis). Los modelos de dominio interno NUNCA deben mezclarse. ■ Interacción de Servicios: El Contexto RiskMitigation podría generar una Notification para el Contexto SocialConnect para sugerirle al usuario un recurso (del Contexto ResourcesDocs) sin exponer los datos sensibles. 4. Conclusión  La definición de estos cuatro Bounded Contexts proporciona una base sólida para una arquitectura de mi- croservicios. Al mantener los modelos de dominio (especialmente los de SocialConnect y RiskMitigation) estrictamente separados, el proyecto asegura la escalabilidad, la mantenibilidad y, lo más importante, la segu- ridad y privacidad de los datos de salud pública sensibles que maneja. 3
