@@ -12,6 +12,6 @@ sequenceDiagram
     Note right of Auth: Valida email, username, etc.
     Auth->>Auth: Hashea la contraseña
     Auth->>Auth: Guarda usuario en BBDD
-    Auth->>-Broker: Publica evento 'UserRegistered'
+    Auth->>Broker: Publica evento 'UserRegistered'
     Auth-->>-GW: 201 Created
     GW-->>-C: 201 Created
