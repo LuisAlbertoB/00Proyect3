@@ -9,7 +9,7 @@ graph TD
 
         %% Core Components
         APIGW[API Gateway]
-        Broker[Message Broker<br/>(RabbitMQ)]
+        Broker["Message Broker<br/>(RabbitMQ)"]
 
         %% Bounded Contexts as Subgraphs
         subgraph "AuthIdentity (Contexto de Identidad)"
@@ -17,7 +17,7 @@ graph TD
             AuthSvc[AuthIdentity Service]
             style AuthSvc fill:#007bff,color:#fff
             AuthAggregates("<b>Aggregate Root:</b><br/>- User")
-            AuthDB[(users_db<br/>PostgreSQL)]
+            AuthDB[("users_db<br/>PostgreSQL")]
             AuthSvc --> AuthAggregates
             AuthAggregates --> AuthDB
         end
@@ -27,7 +27,7 @@ graph TD
             SocialSvc[SocialConnect Service]
             style SocialSvc fill:#dc3545,color:#fff
             SocialAggregates("<b>Aggregate Roots:</b><br/>- Publication<br/>- UserNode (Grafo)")
-            SocialDBs[(Bases de Datos Políglotas<br/>MongoDB, Neo4j, Redis)]
+            SocialDBs[("Bases de Datos Políglotas<br/>MongoDB, Neo4j, Redis")]
             SocialSvc --> SocialAggregates
             SocialAggregates --> SocialDBs
         end
@@ -37,7 +37,7 @@ graph TD
             MessagingSvc[Messaging Service]
             style MessagingSvc fill:#28a745,color:#fff
             MessagingAggregates("<b>Aggregate Root:</b><br/>- Conversation")
-            MessagingDB[(messaging_db<br/>Cassandra)]
+            MessagingDB[("messaging_db<br/>Cassandra")]
             MessagingSvc --> MessagingAggregates
             MessagingAggregates --> MessagingDB
         end
@@ -47,7 +47,7 @@ graph TD
             RiskSvc[RiskMitigation Service]
             style RiskSvc fill:#ffc107,color:#000
             RiskAggregates("<b>Aggregate Root:</b><br/>- RiskProfile")
-            RiskDB[(risk_analysis_db<br/>Data Warehouse)]
+            RiskDB[("risk_analysis_db<br/>Data Warehouse")]
             RiskSvc --> RiskAggregates
             RiskAggregates --> RiskDB
         end
@@ -57,7 +57,7 @@ graph TD
             ResourcesSvc[ResourcesDocs Service]
             style ResourcesSvc fill:#6f42c1,color:#fff
             ResourcesAggregates("<b>Aggregate Root:</b><br/>- Resource")
-            ResourcesDB[(resources_db<br/>PostgreSQL)]
+            ResourcesDB[("resources_db<br/>PostgreSQL")]
             ResourcesSvc --> ResourcesAggregates
             ResourcesAggregates --> ResourcesDB
         end
