@@ -1,48 +1,37 @@
 erDiagram
-    "AuthIdentity" {
-        string Subdominio "Soporte"
-        string Aggregate_Root "User"
-        string Agregado "User-UserProfile"
-        string Identificadores "user_id (UUID)"
-        string Value_Objects "Email, HashedPassword, Username"
-    }
+    %% Relaciones Conceptuales entre Bounded Contexts
+    "AuthIdentity"      }o--o{ "SocialConnect"    : "Provee Identidad a"
+    "AuthIdentity"      }o--o{ "MessagingService" : "Provee Identidad a"
+    "AuthIdentity"      }o--o{ "RiskMitigation"   : "Provee Identidad a"
+    "AuthIdentity"      }o--o{ "PasswordGuardian" : "Usa para Validar"
+    "SocialConnect"     }o--o{ "RiskMitigation"   : "Es Analizado por"
+    "RiskMitigation"    }o--o{ "ResourcesDocs"    : "Sugiere"
 
-    "SocialConnect" {
-        string Subdominio "Core (Principal)"
-        string Aggregate_Roots "Publication, UserNode"
-        string Agregado "Publication-Media-Comments"
-        string Identificadores "publication_id, comment_id, media_id (UUIDs)"
-        string Value_Objects "Location, MediaType"
-    }
+    %% Atributos de cada Bounded Context
+    "AuthIdentity": "Subdominio: Soporte"
+    "AuthIdentity": "Aggregate Root: User"
+    "AuthIdentity": "Agregado: User-UserProfile"
+    "AuthIdentity": "Value Objects: Email, HashedPassword"
 
-    "MessagingService" {
-        string Subdominio "Soporte"
-        string Aggregate_Root "Conversation"
-        string Agregado "Conversation-Participants-Messages"
-        string Identificadores "conversation_id, message_id (UUIDs)"
-        string Value_Objects "MessageStatus, Role"
-    }
+    "SocialConnect": "Subdominio: Core (Principal)"
+    "SocialConnect": "Aggregate Roots: Publication, UserNode"
+    "SocialConnect": "Agregado: Publication-Media-Comments"
+    "SocialConnect": "Value Objects: Location, MediaType"
 
-    "RiskMitigation" {
-        string Subdominio "Core (Soporte al Principal)"
-        string Aggregate_Root "RiskProfile"
-        string Agregado "RiskProfile"
-        string Identificadores "risk_profile_id (UUID)"
-        string Value_Objects "RiskScore, AnalysisResult"
-    }
+    "MessagingService": "Subdominio: Soporte"
+    "MessagingService": "Aggregate Root: Conversation"
+    "MessagingService": "Agregado: Conversation-Participants-Messages"
+    "MessagingService": "Value Objects: MessageStatus, Role"
 
-    "ResourcesDocs" {
-        string Subdominio "Soporte"
-        string Aggregate_Root "Resource"
-        string Agregado "Resource"
-        string Identificadores "resource_id (UUID)"
-        string Value_Objects "Category, ContentBlock"
-    }
+    "RiskMitigation": "Subdominio: Core (Soporte al Principal)"
+    "RiskMitigation": "Aggregate Root: RiskProfile"
+    "RiskMitigation": "Agregado: RiskProfile"
+    "RiskMitigation": "Value Objects: RiskScore, AnalysisResult"
 
-    "PasswordGuardian" {
-        string Subdominio "Genérico"
-        string Aggregate_Root "N/A (Servicio sin estado)"
-        string Agregado "N/A"
-        string Identificadores "N/A"
-        string Value_Objects "PasswordToCheck"
-    }
+    "ResourcesDocs": "Subdominio: Soporte"
+    "ResourcesDocs": "Aggregate Root: Resource"
+    "ResourcesDocs": "Agregado: Resource"
+    "ResourcesDocs": "Value Objects: Category, ContentBlock"
+
+    "PasswordGuardian": "Subdominio: Genérico"
+    "PasswordGuardian": "Value Objects: PasswordToCheck"
