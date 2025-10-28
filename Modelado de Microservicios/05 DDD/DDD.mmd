@@ -1,100 +1,48 @@
-graph TD
-    %% External Actors & Systems
-    Client([Cliente])
-    PwnedDB[("API Externa<br/>Have I Been Pwned")]
-    PushServices[("Servicios Push<br/>APNS / FCM")]
+erDiagram
+    "AuthIdentity" {
+        string Subdominio "Soporte"
+        string Aggregate_Root "User"
+        string Agregado "User-UserProfile"
+        string Identificadores "user_id (UUID)"
+        string Value_Objects "Email, HashedPassword, Username"
+    }
 
-    subgraph "Sistema Reconexión Humana"
-        direction LR
+    "SocialConnect" {
+        string Subdominio "Core (Principal)"
+        string Aggregate_Roots "Publication, UserNode"
+        string Agregado "Publication-Media-Comments"
+        string Identificadores "publication_id, comment_id, media_id (UUIDs)"
+        string Value_Objects "Location, MediaType"
+    }
 
-        %% Core Components
-        APIGW[API Gateway]
-        Broker["Message Broker<br/>(RabbitMQ)"]
+    "MessagingService" {
+        string Subdominio "Soporte"
+        string Aggregate_Root "Conversation"
+        string Agregado "Conversation-Participants-Messages"
+        string Identificadores "conversation_id, message_id (UUIDs)"
+        string Value_Objects "MessageStatus, Role"
+    }
 
-        %% Bounded Contexts as Subgraphs
-        subgraph "AuthIdentity (Contexto de Identidad)"
-            direction TB
-            AuthSvc[AuthIdentity Service]
-            style AuthSvc fill:#007bff,color:#fff
-            AuthAggregates("<b>Aggregate Root:</b><br/>- User")
-            AuthDB[("users_db<br/>PostgreSQL")]
-            AuthSvc --> AuthAggregates
-            AuthAggregates --> AuthDB
-        end
+    "RiskMitigation" {
+        string Subdominio "Core (Soporte al Principal)"
+        string Aggregate_Root "RiskProfile"
+        string Agregado "RiskProfile"
+        string Identificadores "risk_profile_id (UUID)"
+        string Value_Objects "RiskScore, AnalysisResult"
+    }
 
-        subgraph "SocialConnect (Core Domain)"
-            direction TB
-            SocialSvc[SocialConnect Service]
-            style SocialSvc fill:#dc3545,color:#fff
-            SocialAggregates("<b>Aggregate Roots:</b><br/>- Publication<br/>- UserNode (Grafo)")
-            SocialDBs[("Bases de Datos Políglotas<br/>MongoDB, Neo4j, Redis")]
-            SocialSvc --> SocialAggregates
-            SocialAggregates --> SocialDBs
-        end
+    "ResourcesDocs" {
+        string Subdominio "Soporte"
+        string Aggregate_Root "Resource"
+        string Agregado "Resource"
+        string Identificadores "resource_id (UUID)"
+        string Value_Objects "Category, ContentBlock"
+    }
 
-        subgraph "MessagingService (Contexto de Mensajería)"
-            direction TB
-            MessagingSvc[Messaging Service]
-            style MessagingSvc fill:#28a745,color:#fff
-            MessagingAggregates("<b>Aggregate Root:</b><br/>- Conversation")
-            MessagingDB[("messaging_db<br/>Cassandra")]
-            MessagingSvc --> MessagingAggregates
-            MessagingAggregates --> MessagingDB
-        end
-
-        subgraph "RiskMitigation (Contexto de Riesgo - Aislado)"
-            direction TB
-            RiskSvc[RiskMitigation Service]
-            style RiskSvc fill:#ffc107,color:#000
-            RiskAggregates("<b>Aggregate Root:</b><br/>- RiskProfile")
-            RiskDB[("risk_analysis_db<br/>Data Warehouse")]
-            RiskSvc --> RiskAggregates
-            RiskAggregates --> RiskDB
-        end
-
-        subgraph "ResourcesDocs (Contexto de Recursos)"
-            direction TB
-            ResourcesSvc[ResourcesDocs Service]
-            style ResourcesSvc fill:#6f42c1,color:#fff
-            ResourcesAggregates("<b>Aggregate Root:</b><br/>- Resource")
-            ResourcesDB[("resources_db<br/>PostgreSQL")]
-            ResourcesSvc --> ResourcesAggregates
-            ResourcesAggregates --> ResourcesDB
-        end
-
-        subgraph "PasswordGuardian (Contexto de Seguridad)"
-            direction TB
-            GuardianSvc[PasswordGuardian Service]
-            style GuardianSvc fill:#6c757d,color:#fff
-            GuardianSvc --> PwnedDB
-        end
-
-        subgraph "NotificationService (Contexto de Notificaciones)"
-            direction TB
-            NotifierSvc[Notification Service]
-            style NotifierSvc fill:#17a2b8,color:#fff
-            NotifierSvc --> PushServices
-        end
-    end
-
-    %% Synchronous Communication
-    Client -- "REST API Calls" --> APIGW
-    APIGW -- "/auth/*" --> AuthSvc
-    APIGW -- "/social/*" --> SocialSvc
-    APIGW -- "/messaging/*" --> MessagingSvc
-    APIGW -- "/resources/*" --> ResourcesSvc
-    AuthSvc -- "POST /is-secure" --> GuardianSvc
-    RiskSvc -- "GET /resources/{id}" --> ResourcesSvc
-
-    %% Asynchronous Communication (Events)
-    AuthSvc -- "Publica 'UserRegistered'" --> Broker
-    SocialSvc -- "Publica 'PostCreated', 'CommentAdded'" --> Broker
-    RiskSvc -- "Publica 'InterventionRequired'" --> Broker
-
-    Broker -- "Consume 'UserRegistered'" --> SocialSvc
-    Broker -- "Consume 'UserRegistered'" --> RiskSvc
-    Broker -- "Consume 'PostCreated', etc." --> RiskSvc
-    Broker -- "Consume 'InterventionRequired', etc." --> NotifierSvc
-
-    %% Styling
-    classDef default stroke:#333,stroke-width:2px;
+    "PasswordGuardian" {
+        string Subdominio "Genérico"
+        string Aggregate_Root "N/A (Servicio sin estado)"
+        string Agregado "N/A"
+        string Identificadores "N/A"
+        string Value_Objects "PasswordToCheck"
+    }
