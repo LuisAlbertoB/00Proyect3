@@ -1,37 +1,50 @@
-erDiagram
-    %% Relaciones Conceptuales entre Bounded Contexts
-    "AuthIdentity"      }o--o{ "SocialConnect"    : "Provee Identidad a"
-    "AuthIdentity"      }o--o{ "MessagingService" : "Provee Identidad a"
-    "AuthIdentity"      }o--o{ "RiskMitigation"   : "Provee Identidad a"
-    "AuthIdentity"      }o--o{ "PasswordGuardian" : "Usa para Validar"
-    "SocialConnect"     }o--o{ "RiskMitigation"   : "Es Analizado por"
-    "RiskMitigation"    }o--o{ "ResourcesDocs"    : "Sugiere"
+classDiagram
+    direction LR
 
-    %% Atributos de cada Bounded Context
-    "AuthIdentity": "Subdominio: Soporte"
-    "AuthIdentity": "Aggregate Root: User"
-    "AuthIdentity": "Agregado: User-UserProfile"
-    "AuthIdentity": "Value Objects: Email, HashedPassword"
+    class AuthIdentity {
+        <<Bounded Context>>
+        +Subdominio: Soporte
+        +Aggregate Root: User
+        +Value Objects: Email, HashedPassword
+    }
 
-    "SocialConnect": "Subdominio: Core (Principal)"
-    "SocialConnect": "Aggregate Roots: Publication, UserNode"
-    "SocialConnect": "Agregado: Publication-Media-Comments"
-    "SocialConnect": "Value Objects: Location, MediaType"
+    class SocialConnect {
+        <<Core Domain>>
+        +Subdominio: Principal
+        +Aggregate Roots: Publication, UserNode
+        +Value Objects: Location, MediaType
+    }
 
-    "MessagingService": "Subdominio: Soporte"
-    "MessagingService": "Aggregate Root: Conversation"
-    "MessagingService": "Agregado: Conversation-Participants-Messages"
-    "MessagingService": "Value Objects: MessageStatus, Role"
+    class MessagingService {
+        <<Bounded Context>>
+        +Subdominio: Soporte
+        +Aggregate Root: Conversation
+        +Value Objects: MessageStatus, Role
+    }
 
-    "RiskMitigation": "Subdominio: Core (Soporte al Principal)"
-    "RiskMitigation": "Aggregate Root: RiskProfile"
-    "RiskMitigation": "Agregado: RiskProfile"
-    "RiskMitigation": "Value Objects: RiskScore, AnalysisResult"
+    class RiskMitigation {
+        <<Bounded Context>>
+        +Subdominio: Core (Soporte)
+        +Aggregate Root: RiskProfile
+        +Value Objects: RiskScore, AnalysisResult
+    }
 
-    "ResourcesDocs": "Subdominio: Soporte"
-    "ResourcesDocs": "Aggregate Root: Resource"
-    "ResourcesDocs": "Agregado: Resource"
-    "ResourcesDocs": "Value Objects: Category, ContentBlock"
+    class ResourcesDocs {
+        <<Bounded Context>>
+        +Subdominio: Soporte
+        +Aggregate Root: Resource
+        +Value Objects: Category, ContentBlock
+    }
 
-    "PasswordGuardian": "Subdominio: Genérico"
-    "PasswordGuardian": "Value Objects: PasswordToCheck"
+    class PasswordGuardian {
+        <<Generic Subdomain>>
+        +Value Objects: PasswordToCheck
+    }
+
+    ' Relaciones de Dependencia
+    SocialConnect ..> AuthIdentity : "usa identidad de"
+    MessagingService ..> AuthIdentity : "usa identidad de"
+    RiskMitigation ..> AuthIdentity : "usa identidad de"
+    AuthIdentity ..> PasswordGuardian : "valida con"
+    RiskMitigation ..> SocialConnect : "analiza"
+    RiskMitigation ..> ResourcesDocs : "sugiere"
